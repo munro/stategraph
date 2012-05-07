@@ -24,12 +24,12 @@ StateGraph.prototype.state = function (name, fn) {
     }
 
     // Define substate
-    args = _(arguments).toArray();
+    args = _.toArray(arguments);
     if (args.length > 2) {
         return this.states[name].state.apply(this.states[name], args.slice(1));
     }
 
-    return (this.states[name] = new State(fn));
+    return (this.states[name] = new State(fn, this.tree));
 };
 
 StateGraph.prototype.go = function (name) {
@@ -42,7 +42,7 @@ StateGraph.prototype.go = function (name) {
             this.states[this.current].end();
         }
         this.current = name;
-        this.states[name].start(Array.prototype.slice.call(arguments, 1));
+        this.states[name].start(_.toArray(arguments).slice(1));
         return this.states[name];
     }
 };
@@ -63,9 +63,10 @@ StateGraph.prototype.end = function () {
 /**
  * State
  */
-State = function (fn) {
+State = function (fn, tree) {
     EventEmitter.call(this);
     this.fn = fn;
+    this.tree = (tree || []).concat([this]);
 };
 
 State.prototype = Object.create(EventEmitter.prototype);
@@ -75,20 +76,20 @@ State.prototype = Object.create(EventEmitter.prototype);
  */
 State.prototype.state = function () {
     // Lazy mixin a sub StateGraph
-    _(this).extend(StateGraph.prototype);
+    _.extend(this, StateGraph.prototype);
     StateGraph.call(this);
     return StateGraph.prototype.state.apply(this, arguments);
 };
 
 State.prototype.start = function (args) {
-    this.fn.apply(this, [this].concat(args));
+    this.fn.apply(this, this.tree.concat(args));
 };
 
 /**
  * This method gets clobbered by the StateGraph when mixing in substates.
  */
 State.prototype.end = function () {
-    this.emit('end', this);
+    this.emit.apply(this, ['end'].concat(this.tree));
 };
 
 module.exports = StateGraph;

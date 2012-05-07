@@ -91,28 +91,35 @@ test('test substates', function (t) {
     var q = [], a, a_1, a_2, b, graph = new StateGraph();
 
     // define graph
-    a = graph.state('a', function (self) {
+    a = graph.state('a', function (self_a) {
         q.push(['+a'].concat(args(arguments).slice(1)).join(':'));
-        t.equal(a, self);
-    }).on('end', function () {
+        t.equal(a, self_a);
+    }).on('end', function (self_a) {
         q.push('-a');
+        t.equal(a, self_a);
     });
     t.equal(graph.states.a, a);
     t.equal(graph.states.a.states, undefined);
 
-    a_1 = graph.state('a', '1', function (self) {
-        q.push(['+a_1'].concat(args(arguments).slice(1)).join(':'));
-        t.equal(a_1, self);
-    }).on('end', function () {
+    a_1 = graph.state('a', '1', function (self_a, self_a_1) {
+        q.push(['+a_1'].concat(args(arguments).slice(2)).join(':'));
+        t.equal(a, self_a);
+        t.equal(a_1, self_a_1);
+    }).on('end', function (self_a, self_a_1) {
         q.push('-a_1');
+        t.equal(a, self_a);
+        t.equal(a_1, self_a_1);
     });
     t.equal(graph.states.a.states['1'], a_1);
 
-    a_2 = graph.state('a', '2', function (self) {
-        q.push(['+a_2'].concat(args(arguments).slice(1)).join(':'));
-        t.equal(a_2, self);
-    }).on('end', function () {
+    a_2 = graph.state('a', '2', function (self_a, self_a_2) {
+        q.push(['+a_2'].concat(args(arguments).slice(2)).join(':'));
+        t.equal(a, self_a);
+        t.equal(a_2, self_a_2);
+    }).on('end', function (self_a, self_a_2) {
         q.push('-a_2');
+        t.equal(a, self_a);
+        t.equal(a_2, self_a_2);
     });
     t.equal(graph.states.a.states['2'], a_2);
 
