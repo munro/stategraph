@@ -63,14 +63,14 @@ When the graph leaves a state, you can bind a callback to the state's `end`
 event.  Like the state callback, the first argument of the `end` event is
 the `State` object.
 
-    graph.state('hello', function (end) {
+    graph.state('hello', function (hello) {
         end.timer = setTimeout(function () {
             alert('Hello world!');
         }, 1000);
-    }).on('end', function (end) {
+    }).on('leave', function (hello) {
         // Let's remove the trigger if the graph leaves the state before it
         // triggers.
-        clearTimeout(end.timer);
+        clearTimeout(hello.timer);
     });
 
 You can also create & bind your own custom events.
@@ -130,7 +130,7 @@ object.
     * Inherits [events.EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter)
     * Lazily inherits `StateGraph` when the `state` method is called.
     * Events 
-        * `end` — Triggered when the graph leaves this state.  The first argument
+        * `leave` — Triggered when the graph leaves this state.  The first argument
             is the `State` object.
 
 ## Example
@@ -150,7 +150,7 @@ them!
             game.kick(other_player);
         };
         player.on('kick', host.on_kick);
-    }).on('end', function (host) {
+    }).on('leave', function (host) {
         // No more kick for you!
         player.removeListener('kick', host.on_kick);
     });

@@ -55,7 +55,7 @@ StateGraph.prototype.end = function () {
     // {StateGraph} into a {State} will clobber the existing `end` method.  So
     // we must reimplement the code here.
     if (this.emit) {
-        this.emit('end', this);
+        this.emit('leave', this);
     }
     this.current = false;
 };
@@ -89,7 +89,7 @@ State.prototype.start = function (args) {
  * This method gets clobbered by the StateGraph when mixing in substates.
  */
 State.prototype.end = function () {
-    this.emit.apply(this, ['end'].concat(this.tree));
+    this.emit.apply(this, ['leave'].concat(this.tree));
 };
 
 module.exports = StateGraph;

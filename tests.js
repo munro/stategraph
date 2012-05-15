@@ -20,7 +20,7 @@ test('test stategraph', function (t) {
 
     t.equal(graph.states.a, a);
 
-    t.equal(a.on('end', function (self) {
+    t.equal(a.on('leave', function (self) {
         q.push('-a');
         t.equal(a, self, 'state exit callback should pass in self');
     }), a, 'binding events should return the same obj for chaining');
@@ -41,20 +41,20 @@ test('test stategraph', function (t) {
     b = graph.state('b', function (self) {
         q.push(['+b'].concat(args(arguments).slice(1)).join(':'));
         t.equal(b, self, 'state callback should pass in self');
-    }).on('end', function (self) {
+    }).on('leave', function (self) {
         q.push('-b');
         t.equal(b, self, 'state exit callback should pass in self');
     });
 
     c = graph.state('c', function () {
         q.push(['+c'].concat(args(arguments).slice(1)).join(':'));
-    }).on('end', function () {
+    }).on('leave', function () {
         q.push('-c');
     });
 
     d = graph.state('d', function () {
         q.push(['+d'].concat(args(arguments).slice(1)).join(':'));
-    }).on('end', function () {
+    }).on('leave', function () {
         q.push('-d');
     });
 
@@ -94,7 +94,7 @@ test('test substates', function (t) {
     a = graph.state('a', function (self_a) {
         q.push(['+a'].concat(args(arguments).slice(1)).join(':'));
         t.equal(a, self_a);
-    }).on('end', function (self_a) {
+    }).on('leave', function (self_a) {
         q.push('-a');
         t.equal(a, self_a);
     });
@@ -105,7 +105,7 @@ test('test substates', function (t) {
         q.push(['+a_1'].concat(args(arguments).slice(2)).join(':'));
         t.equal(a, self_a);
         t.equal(a_1, self_a_1);
-    }).on('end', function (self_a, self_a_1) {
+    }).on('leave', function (self_a, self_a_1) {
         q.push('-a_1');
         t.equal(a, self_a);
         t.equal(a_1, self_a_1);
@@ -116,7 +116,7 @@ test('test substates', function (t) {
         q.push(['+a_2'].concat(args(arguments).slice(2)).join(':'));
         t.equal(a, self_a);
         t.equal(a_2, self_a_2);
-    }).on('end', function (self_a, self_a_2) {
+    }).on('leave', function (self_a, self_a_2) {
         q.push('-a_2');
         t.equal(a, self_a);
         t.equal(a_2, self_a_2);
@@ -139,7 +139,7 @@ test('test substates', function (t) {
     b = graph.state('b', function (self) {
         q.push(['+b'].concat(args(arguments).slice(1)).join(':'));
         t.equal(b, self);
-    }).on('end', function () {
+    }).on('leave', function () {
         q.push('-b');
     });
 
