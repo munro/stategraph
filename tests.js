@@ -124,16 +124,16 @@ test('test substates', function (t) {
     t.equal(graph.states.a.states['2'], a_2);
 
     // movement
-    t.equal(graph.state(), undefined);
+    t.equal(graph.state(), null);
     t.equal(graph.go('a'), a);
     t.equal(graph.state(), a);
-    t.equal(graph.state().state(), undefined);
+    t.equal(graph.state().state(), null);
     t.equal(graph.state().go('1'), a_1);
     t.equal(graph.state().state(), a_1);
     t.equal(graph.state().go('2'), a_2);
     t.equal(graph.state().state(), a_2);
     graph.end();
-    t.equal(graph.state(), undefined);
+    t.equal(graph.state(), null);
 
     // define more states
     b = graph.state('b', function (self) {
@@ -148,7 +148,7 @@ test('test substates', function (t) {
     t.equal(graph.state(), b);
     t.equal(graph.go('a'), a);
     t.equal(graph.state(), a);
-    t.equal(graph.state().state(), undefined);
+    t.equal(graph.state().state(), null);
     t.equal(graph.state().go('2', 1, 2, 3), a_2);
     t.equal(graph.state().state(), a_2);
     t.equal(graph.state().go('1', null, false), a_1);
@@ -158,7 +158,7 @@ test('test substates', function (t) {
     t.equal(graph.go('b', 1), b);
     t.equal(graph.state(), b);
     graph.end();
-    t.equal(graph.state(), undefined);
+    t.equal(graph.state(), null);
 
     // test movement
     t.equal(
