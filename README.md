@@ -1,4 +1,4 @@
-# Stategraph — evented data structure for untangling state!
+# Stategraph — evented data structure for untangling state! [![Build Status](https://secure.travis-ci.org/munro/stategraph.png?branch=master)](http://travis-ci.org/munro/stategraph)
 
 Stategraphs are a great tool for managing state, it can be used to simplify
 things such as game logic, or UI flow.  This library provides evented states,
@@ -104,22 +104,24 @@ To move about nested graphs, you can use the `.go(String name)` method to go to
 the lobby state, which returns the lobby `State` object (which is now also a
 `StateGraph`!)  So you can chain your nested graphs by calling `go` again!
 
-    graph.go('lobby').go('host');
+    graph.go('lobby').go('host', args...);
 
-If you want to switch sub-states while in the lobby, simply call `state` without
-and arguments to return the current state.  Then call go on our lobby `State`
-object.
+The other way is to return the sub‑state you desire to move to—and call the
+`jump` command on that state.  The `jump` command will backtrace the nested
+graphs and move to the correct parent states, but keep in mind no arguments will
+be used when moving to parent states.
 
-    graph.state().go('player');
-    graph.state().go('host');
+    graph.state('lobby', 'player').jump(args...);
 
-## Methods
+## API
 
 * `StateGraph`
-    * `state(String name, Function callback) -> State` — Define a state with a callback
+    * `state(String name..., Function callback) -> State` — Define a state with a callback
         to be called when entered.  Remember the `State` context is the first
         argument of the callback!  This function returns the newly created `State`
         object.
+    * `state(String name...) -> State` — Return the `State`, or sub‑`State`
+        object by name
     * `state() -> State` — Return the current state.
     * `go(String name[, args...]) -> State` — Switch states, passing any args to the state
         callback.  Returns the newly entered state.
@@ -129,9 +131,13 @@ object.
 * `State`
     * Inherits [events.EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter)
     * Lazily inherits `StateGraph` when the `state` method is called.
+        * `jump([args...])` — Jump to this state with a list of arguments,
+            recursively moving to the correct state for the parent graphs.
     * Events 
-        * `leave` — Triggered when the graph leaves this state.  The first argument
-            is the `State` object.
+        * `enter` — Triggered when the graph enters this state, any arguments
+            used to move to this state are avaliable after the list of states.
+        * `leave` — Triggered when the graph leaves this state.  The head of
+            the arguments are the parent `State` objects.
 
 ## Example
 

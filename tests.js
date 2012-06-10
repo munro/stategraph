@@ -2,7 +2,7 @@
 
 'use strict';
 
-var StateGraph = require('./stategraph'),
+var StateGraph = require('./'),
     test = require('tap').test;
 
 function args(list) {
@@ -18,6 +18,7 @@ test('test stategraph', function (t) {
         t.equal(a, self, 'state callback should pass in self');
     });
 
+    t.equal(StateGraph.VERSION, '0.2.0');
     t.equal(graph.states.a, a);
 
     t.equal(a.on('leave', function (self) {
@@ -57,6 +58,12 @@ test('test stategraph', function (t) {
     }).on('leave', function () {
         q.push('-d');
     });
+
+    // existance
+    t.equal(a, graph.state('a'));
+    t.equal(b, graph.state('b'));
+    t.equal(c, graph.state('c'));
+    t.equal(d, graph.state('d'));
 
     // movement
     t.equal(b, graph.go('b', 'foo'));
@@ -123,6 +130,11 @@ test('test substates', function (t) {
     });
     t.equal(graph.states.a.states['2'], a_2);
 
+    // existance
+    t.equal(a, graph.state('a'));
+    t.equal(a_1, graph.state('a', '1'));
+    t.equal(a_2, graph.state('a', '2'));
+
     // movement
     t.equal(graph.state(), null);
     t.equal(graph.go('a'), a);
@@ -143,6 +155,12 @@ test('test substates', function (t) {
         q.push('-b');
     });
 
+    // existance
+    t.equal(a, graph.state('a'));
+    t.equal(a_1, graph.state('a', '1'));
+    t.equal(a_2, graph.state('a', '2'));
+    t.equal(b, graph.state('b'));
+
     // movement
     t.equal(graph.go('b', 'foo', 'bar'), b);
     t.equal(graph.state(), b);
@@ -160,12 +178,28 @@ test('test substates', function (t) {
     graph.end();
     t.equal(graph.state(), null);
 
+    // test jump command
+    t.equal(graph.state('a', '1').jump('hello', 'world'), a_1);
+    t.equal(graph.state('a', '2').jump('c', 'd'), a_2);
+    t.equal(graph.state('b').jump('foo', 'bar'), b);
+    t.equal(graph.end(), undefined);
+    t.equal(graph.state('a').go('1', 'hello', 'world'), a_1);
+    t.equal(graph.state('a').go('2', 'a', 'b'), a_2);
+    t.equal(graph.end(), undefined);
+
     // test movement
     t.equal(
         q.join(','),
         ('+a,+a_1,-a_1,+a_2,-a_2,-a,+b:foo:bar,-b,+a,+a_2:1:2:3,-a_2,' +
-         '+a_1::false,-a_1,+a_2,-a_2,-a,+b:1,-b')
+         '+a_1::false,-a_1,+a_2,-a_2,-a,+b:1,-b,+a,+a_1:hello:world,' +
+         '-a_1,+a_2:c:d,-a_2,-a,+b:foo:bar,-b,+a,+a_1:hello:world,' +
+         '-a_1,+a_2:a:b,-a_2,-a')
     );
 
+    t.end();
+});
+
+
+test('test substates#2', function (t) {
     t.end();
 });
