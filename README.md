@@ -11,7 +11,7 @@ if you don't believe me! :)
 
 ## Downloads
 
-Tested to work against Internet Explorer 6+, Safari 3+, Google Chrome 1+, Firefox 3+, and Opera 10+!
+Tested to work against Internet Explorer 9+, Safari 5.0.5+, Google Chrome 5+, and Firefox 4+!
 
 [Development Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.js) — 7.7 KiB, uncompressed with comments.
 
