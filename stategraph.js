@@ -1,8 +1,22 @@
 /*jslint node: true, newcap: true, nomen: true */
 /*global _, EventEmitter */
 
-var StateGraph = (function (_, EventEmitter, StateGraph, State, State_prototype) {
+var StateGraph = (function (_, EventEmitter, StateGraph, State, State_prototype, objectCreate) {
     'use strict';
+
+    /**
+     * Create a new object based on the old one
+     * http://javascript.crockford.com/prototypal.html
+     */
+    if (typeof objectCreate === 'function') {
+        objectCreate = objectCreate;
+    } else {
+        objectCreate = function (o) {
+            function F() {}
+            F.prototype = o;
+            return new F();
+        };
+    }
 
     /**
      * Helper for currying a variadic amount of arguments.
@@ -36,7 +50,7 @@ var StateGraph = (function (_, EventEmitter, StateGraph, State, State_prototype)
      */
     StateGraph.emitter = function (emitter) {
         EventEmitter = emitter;
-        State.prototype = _.extend(Object.create(emitter), State_prototype);
+        State.prototype = _.extend(objectCreate(emitter), State_prototype);
     };
 
     StateGraph.prototype = {
@@ -202,7 +216,7 @@ var StateGraph = (function (_, EventEmitter, StateGraph, State, State_prototype)
         self.end = self._end = bind(self.emit, self, ['leave'].concat(tree));
     };
 
-    State.prototype = _.extend(Object.create(EventEmitter.prototype), State_prototype = {
+    State.prototype = _.extend(objectCreate(EventEmitter.prototype), State_prototype = {
         /**
          * Placeholder method for lazily mixing in a sub‑StateGraph.
          * @return {State} Newly created sub‑state
