@@ -13,9 +13,9 @@ if you don't believe me! :)
 
 Tested to work against Internet Explorer 9+, Safari 5.0.5+, Google Chrome 5+, and Firefox 4+!
 
-[Development Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.js) — 7.7 KiB, uncompressed with comments.
+[Development Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.js) — 8.0 KiB, uncompressed with comments.
 
-[Production Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.min.js) — 782 bytes, minified and gzipped.
+[Production Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.min.js) — 803 bytes, minified and gzipped.
 
 ## Documentation
 
