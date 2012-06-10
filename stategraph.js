@@ -204,8 +204,8 @@ var StateGraph = (function (_, EventEmitter, StateGraph, State, State_prototype)
 
     State.prototype = _.extend(Object.create(EventEmitter.prototype), State_prototype = {
         /**
-         * Placeholder method for lazily mixing in a sub-StateGraph.
-         * @return {State} Newly created sub-state
+         * Placeholder method for lazily mixing in a sub‑StateGraph.
+         * @return {State} Newly created sub‑state
          */
         state: function () {
             // Lazy mixin a sub StateGraph

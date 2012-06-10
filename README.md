@@ -1,8 +1,13 @@
-# Stategraph — evented data structure for untangling state! [![Build Status](https://secure.travis-ci.org/munro/stategraph.png?branch=master)](http://travis-ci.org/munro/stategraph)
+# Stategraph—evented data structure for untangling state! [![Build Status](https://secure.travis-ci.org/munro/stategraph.png?branch=master)](http://travis-ci.org/munro/stategraph)
 
 Stategraphs are a great tool for managing state, it can be used to simplify
 things such as game logic, or UI flow.  This library provides evented states,
 and nested graphing!  Woah!
+
+Couple this library with [Slots](https://github.com/munro/slots) for a
+path of destruction!  Allowing you to easily clean up bound events when leaving
+a state.  Try using [`emitter.removeListener(event, listener)`](http://nodejs.org/api/events.html#events_emitter_removelistener_event_listener)
+if you don't believe me! :)
 
 ## Documentation
 
@@ -83,21 +88,20 @@ You can also create & bind your own custom events.
 
 ### Nested state
 
-To nest state, simply define your first state by calling
-`.state(String name, Function callback)` on your `State` object, and a
-`StateGraph` will be lazily mixed into your state!  Giving you access to all
-the methods in the `StateGraph` prototype.
+To nest state, simply call the `state` method with a list of states you would
+like to define.  Sub‑states will be entered with the entire list of state
+objects at the head of the arguments, so you can access any parent state.
 
     graph.state('lobby', function (lobby) {
-        lobby.state('host', function (host) {
-            // host can kick
-        });
-
-        lobby.state('player', function (player) {
-            // can't do much
-        });
-
         // players can chat
+    });
+
+    graph.state('lobby', 'host', function (lobby, host) {
+        // host can kick
+    });
+
+    graph.state('lobby', 'player', function (lobby, player) {
+        // can't do anything other than chat
     });
 
 To move about nested graphs, you can use the `.go(String name)` method to go to
@@ -116,15 +120,15 @@ be used when moving to parent states.
 ## API
 
 * `StateGraph`
-    * `state(String name..., Function callback) -> State` — Define a state with a callback
-        to be called when entered.  Remember the `State` context is the first
-        argument of the callback!  This function returns the newly created `State`
-        object.
-    * `state(String name...) -> State` — Return the `State`, or sub‑`State`
+    * `state(String name..., Function callback) → State` — Define a state with a
+        callback to be called when entered.  Remember the `State` context is the
+        first argument of the callback!  This function returns the newly created
+        `State` object.
+    * `state(String name...) → State` — Return the `State`, or sub‑`State`
         object by name
-    * `state() -> State` — Return the current state.
-    * `go(String name[, args...]) -> State` — Switch states, passing any args to the state
-        callback.  Returns the newly entered state.
+    * `state() → State` — Return the current state.
+    * `go(String name[, args...]) → State` — Switch states, passing any args to
+        the state callback.  Returns the newly entered state.
     * `end()` — Leave the current state, ending the graph.  The graph can be
         reentered at any time!
 
@@ -133,7 +137,7 @@ be used when moving to parent states.
     * Lazily inherits `StateGraph` when the `state` method is called.
         * `jump([args...])` — Jump to this state with a list of arguments,
             recursively moving to the correct state for the parent graphs.
-    * Events 
+    * Events
         * `enter` — Triggered when the graph enters this state, any arguments
             used to move to this state are avaliable after the list of states.
         * `leave` — Triggered when the graph leaves this state.  The head of

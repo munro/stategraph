@@ -198,8 +198,3 @@ test('test substates', function (t) {
 
     t.end();
 });
-
-
-test('test substates#2', function (t) {
-    t.end();
-});
