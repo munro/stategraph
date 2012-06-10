@@ -9,6 +9,14 @@ path of destruction!  Allowing you to easily clean up bound events when leaving
 a state.  Try using [`emitter.removeListener(event, listener)`](http://nodejs.org/api/events.html#events_emitter_removelistener_event_listener)
 if you don't believe me! :)
 
+## Downloads
+
+Tested to work against Internet Explorer 6+, Safari 3+, Google Chrome 1+, Firefox 3+, and Opera 10+!
+
+[Development Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.js) — 7.7 KiB, uncompressed with comments.
+
+[Production Version (0.2.0)](https://raw.github.com/munro/stategraph/master/stategraph.min.js) — 782 bytes, minified and gzipped.
+
 ## Documentation
 
 ### Constructing
