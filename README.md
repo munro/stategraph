@@ -23,19 +23,23 @@ Tested to work against Internet Explorer 9+, Safari 5.0.5+, Google Chrome 5+, an
 
 To begin using stategraph, simply require it, and instantiate an object!
 
-    var StateGraph = require('stategraph');
+```javascript
+var StateGraph = require('stategraph');
 
-    var graph = new StateGraph();
+var graph = new StateGraph();
+```
 
 You can also extend the prototype; using plain old prototypal OOP, or with your
 favorite OOP sugar, such as [Self](https://github.com/munro/self).
 
-    function Game() {
-        StateGraph.call(this);
+```javascript
+function Game() {
+    StateGraph.call(this);
 
-        // `this` is now a stategraph!
-    }
-    Game.prototype = Object.create(StateGraph.prototype);
+    // `this` is now a stategraph!
+}
+Game.prototype = Object.create(StateGraph.prototype);
+```
 
 ### State creation & movement
 
@@ -45,30 +49,38 @@ a callback to run when the graph has entered that state.  The first argument of
 the callback is the `State` node.  So you may attach state to that variable, and
 it will still be there when you come back!
 
-    graph.state('home', function (home) {
-        assertTrue(home === this);
+```javascript
+graph.state('home', function (home) {
+    assertTrue(home === this);
 
-        home.count = (home.count || 0) + 1;
-    });
+    home.count = (home.count || 0) + 1;
+});
+```
 
 To move between nodes, call the `.go(String name)` method with the name of the
 state.
 
-    graph.go('home');
+```javascript
+graph.go('home');
+```
 
 You can also call `.go(String name, args...)` with extra arguments that will be
 passed to the state callback.
 
-    graph.state('game', function (game, players, map) {
-        game.players = players;
-    });
+```javascript
+graph.state('game', function (game, players, map) {
+    game.players = players;
+});
 
-    graph.go('game', ['player 1', 'player 2'], 'some_map');
+graph.go('game', ['player 1', 'player 2'], 'some_map');
+```
 
 When you're all done with your graph, you can end it by calling `.end()`.
 Though the graph can be started back up at any time with `.go(String name)`.
 
-    graph.end();
+```javascript
+graph.end();
+```
 
 ### Evented state
 
@@ -76,23 +88,27 @@ When the graph leaves a state, you can bind a callback to the state's `end`
 event.  Like the state callback, the first argument of the `end` event is
 the `State` object.
 
-    graph.state('hello', function (hello) {
-        end.timer = setTimeout(function () {
-            alert('Hello world!');
-        }, 1000);
-    }).on('leave', function (hello) {
-        // Let's remove the trigger if the graph leaves the state before it
-        // triggers.
-        clearTimeout(hello.timer);
-    });
+```javascript
+graph.state('hello', function (hello) {
+    end.timer = setTimeout(function () {
+        alert('Hello world!');
+    }, 1000);
+}).on('leave', function (hello) {
+    // Let's remove the trigger if the graph leaves the state before it
+    // triggers.
+    clearTimeout(hello.timer);
+});
+```
 
 You can also create & bind your own custom events.
 
-    graph.state('world', function (world) {
-        world.emit('test', 'just because');
-    }).on('test', function (message) {
-        alert('testing ' + message); // testing just because
-    });
+```javascript
+graph.state('world', function (world) {
+    world.emit('test', 'just because');
+}).on('test', function (message) {
+    alert('testing ' + message); // testing just because
+});
+```
 
 ### Nested state
 
@@ -100,30 +116,36 @@ To nest state, simply call the `state` method with a list of states you would
 like to define.  Sub‑states will be entered with the entire list of state
 objects at the head of the arguments, so you can access any parent state.
 
-    graph.state('lobby', function (lobby) {
-        // players can chat
-    });
+```javascript
+graph.state('lobby', function (lobby) {
+    // players can chat
+});
 
-    graph.state('lobby', 'host', function (lobby, host) {
-        // host can kick
-    });
+graph.state('lobby', 'host', function (lobby, host) {
+    // host can kick
+});
 
-    graph.state('lobby', 'player', function (lobby, player) {
-        // can't do anything other than chat
-    });
+graph.state('lobby', 'player', function (lobby, player) {
+    // can't do anything other than chat
+});
+```
 
 To move about nested graphs, you can use the `.go(String name)` method to go to
 the lobby state, which returns the lobby `State` object (which is now also a
 `StateGraph`!)  So you can chain your nested graphs by calling `go` again!
 
-    graph.go('lobby').go('host', args...);
+```javascript
+graph.go('lobby').go('host', args...);
+```
 
 The other way is to return the sub‑state you desire to move to—and call the
 `jump` command on that state.  The `jump` command will backtrace the nested
 graphs and move to the correct parent states, but keep in mind no arguments will
 be used when moving to parent states.
 
-    graph.state('lobby', 'player').jump(args...);
+```javascript
+graph.state('lobby', 'player').jump(args...);
+```
 
 ## API
 
@@ -162,20 +184,22 @@ don't want a user to trigger the kick event if they're not a host!  So instead
 of having a state check at the beginning of your events, you can simply remove
 them!
 
-    graph.on('host', function (host) {
-        // Give host ability to kick
-        host.on_kick = function (other_player) {
-            game.kick(other_player);
-        };
-        player.on('kick', host.on_kick);
-    }).on('leave', function (host) {
-        // No more kick for you!
-        player.removeListener('kick', host.on_kick);
-    });
+```javascript
+graph.on('host', function (host) {
+    // Give host ability to kick
+    host.on_kick = function (other_player) {
+        game.kick(other_player);
+    };
+    player.on('kick', host.on_kick);
+}).on('leave', function (host) {
+    // No more kick for you!
+    player.removeListener('kick', host.on_kick);
+});
 
-    graph.on('player', function (player) {
-        // Poor player can't do anything!
-    });
+graph.on('player', function (player) {
+    // Poor player can't do anything!
+});
+```
 
 ## License
 
